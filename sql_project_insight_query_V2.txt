@@ -1,0 +1,44 @@
+/* Query 1 - Query used in first Insight*/
+SELECT ar.ArtistId, ar.Name ArtistName, COUNT(t.Name) Song_count
+FROM Track t
+JOIN Album a
+ON a.AlbumId = t.AlbumId
+JOIN Artist ar
+ON ar.ArtistId = a.ArtistId
+JOIN Genre g
+ON g.GenreId = t.GenreId
+WHERE g.Name = 'Rock'
+GROUP BY 1
+ORDER BY 3 DESC
+LIMIT 10;
+
+
+/* Query 2 - Query used in second Insight*/
+SELECT strftime('%Y', it.InvoiceDate) Invoice_Year, count(*) total_sales
+FROM InvoiceLine il
+JOIN Track t
+ON t.TrackId = il.TrackId
+JOIN Invoice it
+ON il.InvoiceId = it.InvoiceId
+GROUP BY Invoice_Year
+ORDER BY total_sales DESC;
+
+/* Query 3 - Query used in third Insight - Country Sale*/
+SELECT c.Country, SUM(total) total_bill_by_country, 
+     CASE WHEN SUM(total) > 300 THEN 'top'
+     WHEN  SUM(total) > 100 THEN 'middle'
+     ELSE 'low' END AS country_sales_level
+FROM Invoice i
+JOIN Customer c
+ON i.CustomerId  = c.CustomerId 
+GROUP BY c.Country
+ORDER BY 2 DESC;
+
+/* Query 4 - Query used in fourth Insight How many customer accounts managed by each support representative*/
+SELECT e.EmployeeId, e.FirstName, e.Title, COUNT(*) num_customer_accounts
+FROM Customer c
+JOIN Employee e
+ON e.EmployeeId = c.SupportRepId
+GROUP BY e.EmployeeId, e.FirstName
+ORDER BY num_customer_accounts;
+
